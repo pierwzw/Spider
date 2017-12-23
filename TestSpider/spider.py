@@ -41,6 +41,6 @@ def getUrlData4(url, headers):
     """
 
     req = rq.Request(url)
-    req.add_header(headers)
+    req.add_header(headers[0], headers[1])
     data = rq.urlopen(req).read()
     return data
