@@ -35,7 +35,7 @@ def getUrlData3(url, headers):
 
 def getUrlData4(url, headers):
     """
-    读取禁止爬虫的网页
+    读取禁止爬虫的网页2
     :param url:
     :return:
     """
