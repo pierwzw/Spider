@@ -5,6 +5,7 @@ import threading
 import queue
 from urllib import request as rq
 from urllib import error
+from http import cookiejar as ck
 
 
 def crawImage(url, page, path):
@@ -233,7 +234,10 @@ def getContent(urllist, proxy, headers):
     fh.write(html2.encode("utf-8"))
     fh.close()
 
+
 listurl = []
+
+
 # 线程1，专门获取对应网址并处理为真实网址
 class geturl(threading.Thread):
     def __init__(self, key, pagestart, pageend, proxy, urlqueue):
@@ -296,10 +300,10 @@ class getcontent(threading.Thread):
         <title>微信文章页面</title>
         </head>
         <body>'''
-        fh = open("D:/Python35/myweb/part6/2.html", "wb")
+        fh = open("c:\\2.html", "wb")
         fh.write(html1.encode("utf-8"))
         fh.close()
-        fh = open("D:/Python35/myweb/part6/2.html", "ab")
+        fh = open("c:\\2.html", "ab")
         i = 1
         while (True):
             try:
@@ -332,7 +336,7 @@ class getcontent(threading.Thread):
         html2 = '''</body>
         </html>
         '''
-        fh = open("D:/Python35/myweb/part6/2.html", "ab")
+        fh = open("c:\\2.html", "ab")
         fh.write(html2.encode("utf-8"))
         fh.close()
 
@@ -352,9 +356,33 @@ class conrl(threading.Thread):
                 exit()
 
 
+def crawWithFullHeaders(url, filename, fullheaders):
+    """
+    浏览器伪装技术
+    :param url:
+    :param fullheaders:
+    :return:
+    """
+
+    cjar = ck.CookieJar()
+    proxy = rq.ProxyHandler({'http': '127.0.0.1:8888'})
+    opener = rq.build_opener(proxy, rq.HTTPHandler, rq.HTTPCookieProcessor(cjar))
+    headall = []
+    for key, value in fullheaders.items():
+        item = key, value
+        headall.append(item)
+    opener.addheaders = headall
+
+    rq.install_opener(opener)
+    data = rq.urlopen(url).read()
+    fhandle = open(filename, 'wb')
+    fhandle.write(data)
+    fhandle.close()
+
+
 if __name__ == '__main__':
     key = "人工智能"
-    proxy = "119.6.136.122:80"
+    proxy = "127.0.0.1:8889"
     proxy2 = ""
     pagestart = 1  # 起始页
     pageend = 2  # 抓取到哪页
